@@ -13,6 +13,9 @@ const {
   getAll,
   getById,
   checkNewUser,
+  changeEmail,
+  sendNewCode,
+  verifyNewEmail,
 } = require('../controllers/user.controllers');
 
 const express = require('express');
@@ -28,9 +31,12 @@ UserRoutes.patch('/changepassword', [isAuth], changePassword);
 UserRoutes.patch('/update/update', [isAuth], upload.single('image'), update);
 UserRoutes.delete('/', [isAuth], deleteUser);
 UserRoutes.post('/check', checkNewUser);
+UserRoutes.post('/changeEmail/', [isAuth], changeEmail);
+UserRoutes.post('/verifyNewEmail', [isAuth], verifyNewEmail);
 
 //!---------------- REDIRECT-------------------------------
 UserRoutes.get('/register/sendMail/:id', sendCode);
 UserRoutes.get('/sendPasswordByEmail/:id', sendPasswordByEmail);
+UserRoutes.get('/sendNewCode/:id', [isAuth], sendNewCode);
 
 module.exports = UserRoutes;

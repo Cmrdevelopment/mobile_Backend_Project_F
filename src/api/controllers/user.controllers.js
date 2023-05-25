@@ -542,79 +542,111 @@ const checkNewUser = async (req, res, next) => {
 //! ------------------------------------------------------------------------
 //? ------------CHANGE EMAIL y CONFIRMATION OF CHANGED EMAIL----------------
 //! ------------------------------------------------------------------------
-//-----------------------------------------------//
-//Not funtional in this version, work in progress//
-//-----------------------------------------------//
-const changeEmail = async (req, res) => {
+
+const changeEmail = async (req, res, next) => {
   try {
+    await User.syncIndexes();
+    let confirmationCode = randomCode();
     const { email } = req.body;
-    const userDb = await User.findOne({ email });
-    if (userDb) {
+    if (req.user.email != email) {
+      await User.findByIdAndUpdate(req.user._id, {
+        emailChange: email,
+        check: false,
+        confirmationCode: confirmationCode,
+      });
+
       return res.redirect(
-        `${BASE_URL_COMPLETE}/api/v1/users/sendPasswordByEmail/${userDb._id}`
+        `${BASE_URL_COMPLETE}/api/v1/users/sendNewCode/${req.user._id}`
       );
     } else {
-      return res.status(404).json(UserErrors.FAIL_REGISTRERING_USER);
+      return res.status(404).json('Debe meter un email distinto al anterior');
     }
   } catch (error) {
-    console.log(error);
+    return next(error);
   }
 };
-
-//-----------------------------------------------//
-//Not funtional in this version, work in progress//
-//-----------------------------------------------//
-const sendConfirmationOfChangedEmail = async (req, res, next) => {
+const sendNewCode = async (req, res, next) => {
+  console.log('despues redirect', req.body);
   try {
     const { id } = req.params;
-
-    const userDb = await User.findById(id);
-
-    const nodemailer_email = process.env.NODEMAILER_EMAIL;
-    const nodemailer_password = process.env.NODEMAILER_PASSWORD;
+    const userDB = await User.findById(id);
+    const nodemailerEmail = process.env.NODEMAILER_EMAIL;
+    const nodemailerPassword = process.env.NODEMAILER_PASSWORD;
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: nodemailer_email,
-        pass: nodemailer_password,
+        user: nodemailerEmail,
+        pass: nodemailerPassword,
       },
     });
 
-    let randomPasswordSecure = randomPassword();
-
     const mailOptions = {
-      from: nodemailer_email,
-      to: userDb.email,
-      subject: '-----',
-      text: `User: ${userDb.name}. Your new code login is ${randomPasswordSecure} 
-      We sent you this msg because we recived a password change request,
-      if you didn't made it, please contact us!`,
+      from: nodemailerEmail,
+      to: userDB.emailChange,
+      subject: 'Confirmation code email change',
+      text: `${userDB.name} you requested an email change, please insert the following confirmation code: ${userDB.confirmationCode} `,
     };
 
-    transporter.sendMail(mailOptions, async function (error) {
+    transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        return res.status(404).json('dont send email and dont update user');
+        return res.status(404).json({
+          user: userDB,
+          confirmationCode: UserErrors.FAIL_CHANGING_USER_EMAIL,
+        });
       } else {
-        const newPasswordBcrypt = bcrypt.hashSync(randomPasswordSecure, 10);
-        await User.findByIdAndUpdate(id, { password: newPasswordBcrypt });
-        const updatedUser = await User.findById(id);
-
-        if (bcrypt.compareSync(randomPasswordSecure, updatedUser.password)) {
-          return res.status(200).json({
-            updateUser: true,
-            sendPassword: true,
-          });
-        } else {
-          return res.status(404).json({
-            updateUser: false,
-            sendPassword: true,
-          });
-        }
+        console.log('email sent: ' + info.response);
+        return res.status(200).json({
+          email: UserSuccess.SUCCESS_CHANGING_USER_EMAIL,
+          confirmationCode: userDB.confirmationCode,
+        });
       }
     });
   } catch (error) {
     return next(error);
+  }
+};
+
+//! ------------------------------------------------------------------------
+//? -------------------------- VERIFY NEW EMAIL------------------------------
+//! ------------------------------------------------------------------------
+
+const verifyNewEmail = async (req, res, next) => {
+  try {
+    const { email, confirmationCode, emailChange } = req.body;
+    const userExists = await User.findOne({ email });
+    if (!userExists) {
+      return res.status(404).json(UserErrors.FAIL_SEARCHING_USER);
+    } else {
+      if (confirmationCode === userExists.confirmationCode) {
+        if (emailChange !== email) {
+          await userExists.updateOne({ check: true, email: emailChange, emailChange: emailChange});
+          const updateUser = await User.findOne({ email: emailChange });
+          return res.status(200).json({
+            testCheckOk: updateUser.check == true ? true : false,
+          });
+        
+        } else {
+          return res
+            .status(400)
+            .json(
+              'El correo electrónico nuevo debe ser diferente al correo electrónico actual'
+            );
+        }
+      } else {
+        await User.findByIdAndDelete(userExists._id);
+        deleteImgCloudinary(userExists.image);
+        return res.status(200).json({
+          userExists,
+          check: false,
+          delete: (await User.findById(userExists._id))
+            ? UserErrors.FAIL_DELETING_USER
+            : UserSuccess.SUCCESS_DELETING_USER,
+        });
+      }
+    }
+  } catch (error) {
+    return next(setError(500, 'General error, check code'));
   }
 };
 
@@ -632,4 +664,7 @@ module.exports = {
   getAll,
   getById,
   checkNewUser,
+  changeEmail,
+  sendNewCode,
+  verifyNewEmail,
 };
