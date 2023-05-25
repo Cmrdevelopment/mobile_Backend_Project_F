@@ -11,6 +11,8 @@ const { generateToken } = require('../../utils/token');
 const randomPassword = require('../../utils/randomPassword');
 const { UserErrors, UserSuccess } = require('../../helpers/jsonResponseMsgs');
 const { setError } = require('../../helpers/handle-error');
+const MobileDev = require('../models/MobileDev.model');
+const App = require('../models/App.model');
 
 const PORT = process.env.PORT;
 const BASE_URL = process.env.BASE_URL;
@@ -406,7 +408,8 @@ const update = async (req, res, next) => {
         });
       }
     });
-
+    const MobileDev = require('../models/MobileDev.model');
+    const App = require('../models/App.model');
     if (req.file) {
       updateUser.image == req.file.path
         ? testUpdate.push({
@@ -438,6 +441,18 @@ const deleteUser = async (req, res, next) => {
       return res.status(404).json(UserErrors.FAIL_DELETING_USER);
     } else {
       deleteImgCloudinary(image);
+      await App.updateMany(
+        { users: _id },
+        {
+          $pull: { users: _id },
+        }
+      );
+      await MobileDev.updateMany(
+        { users: _id },
+        {
+          $pull: { users: _id },
+        }
+      );
       return res.status(200).json(UserSuccess.SUCCESS_DELETING_USER);
     }
   } catch (error) {

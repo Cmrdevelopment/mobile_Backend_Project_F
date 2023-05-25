@@ -22,7 +22,7 @@ const create = async (req, res, next) => {
 
     const newMobileDev = new MobileDev(filterBody);
     const saveMobileDevs = await newMobileDev.save();
-    
+
     if (saveMobileDevs) {
       return res.status(200).json(saveMobileDevs);
     } else {
@@ -129,19 +129,12 @@ const updateMobileDev = async (req, res, next) => {
 
 const deleteMobileDev = async (req, res, next) => {
   try {
-    // We get the id from params
     const { id } = req.params;
-
     const deleteMobileDev = await MobileDev.findByIdAndDelete(id);
-
-    // esto anterior nos devuelve siempre el elemento buscado pero puede ser que
-    //no haya borrado por eso cuidado
-
     if (deleteMobileDev) {
       await App.updateMany({ mobileDevs: id }, { $pull: { mobileDevs: id } });
-
+      await User.updateMany({ mobileDevs: id }, { $pull: { mobileDevs: id } });
       const testApp = await App.find({ mobileDevs: id });
-
       return res.status(200).json({
         deleteMobileDev: deleteMobileDev,
         testDelete: (await MobileDev.findById(id))

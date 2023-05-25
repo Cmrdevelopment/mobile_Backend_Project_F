@@ -3,9 +3,9 @@ const MobileDev = require('../models/MobileDev.model');
 const User = require('../models/user.model');
 const { AppErrors, AppSuccess } = require('../../helpers/jsonResponseMsgs');
 
-//! ---------------------------------------------------------------------
+//! -----------------------------------------------------------------------
 //? -------------------------------CREATE ---------------------------------
-//! ---------------------------------------------------------------------
+//! -----------------------------------------------------------------------
 const create = async (req, res, next) => {
   try {
     const filterBody = {
@@ -14,10 +14,8 @@ const create = async (req, res, next) => {
       codeLanguages: req.body.codeLanguages,
       appSize: req.body.appSize,
     };
-
     const newApp = new App(filterBody);
     const saveApp = await newApp.save();
-
     if (saveApp) {
       return res.status(200).json(saveApp);
     } else {
@@ -133,50 +131,31 @@ const updateMobileDev = async (req, res, next) => {
   }
 };
 
-//! ---------------------------------------------------------------------
-//? ----------------------------- DELETE --------------------------------
-//! ---------------------------------------------------------------------
+//! ---------------------------------------------------------------------------------------
+//? ----------------------------- DELETE --------------------------------------------------
+//! ---------------------------------------------------------------------------------------
 
 const deleteApp = async (req, res, next) => {
   try {
-    // We get the id from params
     const { id } = req.params;
-
-    // We find by Id and remove it
     const deleteApp = await App.findByIdAndDelete(id);
-
-    // deleteApp contains the removed element,
-    // but sometimes dosen't work, so watch out!
     if (deleteApp) {
-      // We check if the deleted element is in the DB,
-      // if don't, we remove the image from Cloudinary
-      // if the element was not remove, we call next and finish the execution
       if (await App.findById(id)) {
-        // The App is still in the DB, so something went wrong
-        // and we didn't delete it!
-        // We can't do anything else, just report it!
         next(AppErrors.FAIL_DELETING_APP);
       } else {
-        // The App was removed successfully!
-
-        // delete image from cloudinary
-        //deleteImgCloudinary(deleteApp.image);
-
-        // Update the MobileDev collection, but just the Apps with the
-        // Id id
         await MobileDev.updateMany(
-          { Apps: id }, // filter elements to update them
+          { apps: id },
           {
-            // pull removes the elements
-            // that math the filter { apps: id },
+            $pull: { apps: id },
+          }
+        );
+        await User.updateMany(
+          { apps: id },
+          {
             $pull: { apps: id },
           }
         );
       }
-
-      // If everithhing went ok, we return a 200 Ok.
-      // Just in case, we realize a test to check if the mobileDev App
-      // was removed correctly
       return res.status(200).json({
         deleteObject: deleteApp,
         test: (await App.findById(id))
