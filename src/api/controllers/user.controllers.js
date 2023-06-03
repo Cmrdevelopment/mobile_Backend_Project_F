@@ -23,10 +23,10 @@ const BASE_URL_COMPLETE = `${BASE_URL}${PORT}`;
 //! -----------------------------------------------------------------------------
 
 const register = async (req, res, next) => {
-  let catchImg = req.file?.path;
+  //let catchImg = req.file?.path;
   try {
     let confirmationCode = randomCode();
-    const { email, name } = req.body;
+    const { email, name, image } = req.body;
 
     const userExist = await User.findOne({ email }, { name });
 
@@ -71,11 +71,12 @@ const register = async (req, res, next) => {
 //? ----------------------------REGISTER LARGO EN CODIGO ------------------------
 //! -----------------------------------------------------------------------------
 const registerSlow = async (req, res, next) => {
-  let catchImg = req.file?.path;
+  //let catchImg = req.file?.path;
   try {
     let confirmationCode = randomCode();
     const userEmail = req.body.email;
     const userName = req.body.name;
+    const catchImg = req.body.image;
 
     const userExist = await User.findOne(
       { email: userEmail },
@@ -138,7 +139,8 @@ const registerSlow = async (req, res, next) => {
 //? ----------------------------REGISTER CON REDIRECT----------------------------
 //! -----------------------------------------------------------------------------
 const registerWithRedirect = async (req, res, next) => {
-  let catchImg = req.file?.path;
+  //let catchImg = req.file?.path;
+  const catchImg = req.body.image;
 
   try {
     let confirmationCode = randomCode();
@@ -374,7 +376,8 @@ const changePassword = async (req, res, next) => {
 //? ---------------------------------UPDATE-------------------------------------- // AQUÍ
 //! -----------------------------------------------------------------------------
 const update = async (req, res, next) => {
-  let catchImg = req.file?.path;
+  //let catchImg = req.file?.path;
+  let catchImg = req.body.image;
 
   try {
     const filterBody = {
@@ -413,11 +416,11 @@ const update = async (req, res, next) => {
     if (req.file) {
       updateUser.image == req.file.path
         ? testUpdate.push({
-            file: true,
-          })
+          file: true,
+        })
         : testUpdate.push({
-            file: false,
-          });
+          file: false,
+        });
     }
 
     return res.status(200).json({
