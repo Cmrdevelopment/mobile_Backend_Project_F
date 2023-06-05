@@ -13,6 +13,14 @@ const MobileDevSchema = new mongoose.Schema(
 
     apps: [{ type: mongoose.Schema.Types.ObjectId, ref: 'App' }], // Referencia al modelo de dato de las Applicaciones
 
+    image: {
+      type: String,
+    },
+
+    description: {
+      type: String,
+    },
+
     users: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: 'User',
