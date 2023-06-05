@@ -23,10 +23,10 @@ const BASE_URL_COMPLETE = `${BASE_URL}${PORT}`;
 //! -----------------------------------------------------------------------------
 
 const register = async (req, res, next) => {
-  //let catchImg = req.file?.path;
+  let catchImg = req.file?.path;
   try {
     let confirmationCode = randomCode();
-    const { email, name, image } = req.body;
+    const { email, name } = req.body;
 
     const userExist = await User.findOne({ email }, { name });
 
@@ -58,11 +58,12 @@ const register = async (req, res, next) => {
         }, 1100);
       }
     } else {
-      deleteImgCloudinary(catchImg);
+      if (req.file) deleteImgCloudinary(catchImg);
+
       return res.status(409).json('This user already exist');
     }
   } catch (error) {
-    deleteImgCloudinary(catchImg);
+    if (req.file) deleteImgCloudinary(catchImg);
     return next(error);
   }
 };
@@ -71,12 +72,11 @@ const register = async (req, res, next) => {
 //? ----------------------------REGISTER LARGO EN CODIGO ------------------------
 //! -----------------------------------------------------------------------------
 const registerSlow = async (req, res, next) => {
-  //let catchImg = req.file?.path;
+  let catchImg = req.file?.path;
   try {
     let confirmationCode = randomCode();
     const userEmail = req.body.email;
     const userName = req.body.name;
-    const catchImg = req.body.image;
 
     const userExist = await User.findOne(
       { email: userEmail },
@@ -127,11 +127,11 @@ const registerSlow = async (req, res, next) => {
         });
       }
     } else {
-      deleteImgCloudinary(catchImg);
+      if (req.file) deleteImgCloudinary(catchImg);
       return res.status(409).json('This user already exist');
     }
   } catch (error) {
-    deleteImgCloudinary(catchImg);
+    if (req.file) deleteImgCloudinary(catchImg);
     return next(error);
   }
 };
@@ -139,8 +139,7 @@ const registerSlow = async (req, res, next) => {
 //? ----------------------------REGISTER CON REDIRECT----------------------------
 //! -----------------------------------------------------------------------------
 const registerWithRedirect = async (req, res, next) => {
-  //let catchImg = req.file?.path;
-  const catchImg = req.body.image;
+  let catchImg = req.file?.path;
 
   try {
     let confirmationCode = randomCode();
@@ -165,11 +164,11 @@ const registerWithRedirect = async (req, res, next) => {
         );
       }
     } else {
-      deleteImgCloudinary(catchImg);
+      if (req.file) deleteImgCloudinary(catchImg);
       return res.status(409).json('This user already exist');
     }
   } catch (error) {
-    deleteImgCloudinary(catchImg);
+    if (req.file) deleteImgCloudinary(catchImg);
     return next(error);
   }
 };
