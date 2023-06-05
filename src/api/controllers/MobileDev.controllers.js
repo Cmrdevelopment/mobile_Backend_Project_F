@@ -109,6 +109,7 @@ const updateMobileDev = async (req, res, next) => {
       OS: req.body.OS,
       versionOS: req.body.versionOS,
       language: req.body.language,
+      description: req.body.description,
     };
     const { id } = req.params;
     const mobilDevById = await MobileDev.findById(id);
