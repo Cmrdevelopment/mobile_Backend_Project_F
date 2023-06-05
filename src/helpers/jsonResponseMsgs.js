@@ -1,5 +1,6 @@
 const UserSuccess = {
   SUCCESS_DELETING_USER: 'Success deleting user',
+  SUCCESS_CHANGING_USER_EMAIL: 'Success changing user email',
 };
 
 const UserErrors = {
@@ -11,19 +12,7 @@ const UserErrors = {
   FAIL_DELETING_USER: 'Fail deleting user',
   FAIL_MATCHING_PASSWORDS: `Fail matching passwords`,
   FAIL_REGISTRERING_USER: `Fail registering user`,
-};
-
-const MovieErrors = {
-  FAIL_CREATING_MOVIE: 'Fail creating movie',
-  FAIL_UPDATING_MOVIE: 'Fail updating movie',
-  FAIL_SEARCHING_MOVIES: 'Fail searchinng movies',
-  FAIL_SEARCHING_MOVIE_BY_ID: 'Fail searching movie by Id',
-  FAIL_SEARCHING_MOVIE_BY_NAME: 'Fail searching movie by Name',
-  FAIL_DELETING_MOVIE: 'Fail deleting movie',
-};
-
-const MovieSuccess = {
-  SUCCESS_DELETING_MOVIE: 'Success deleting movie',
+  FAIL_CHANGING_USER_EMAIL: 'Fail changing user email',
 };
 
 const MobileDevErrors = {
@@ -55,26 +44,9 @@ const AppSuccess = {
   SUCCESS_DELETING_APP: 'Success deleting app',
 };
 
-const CharacterErrors = {
-  FAIL_UPDATING_CHARACTER: 'Fail updating character',
-  FAIL_CREATING_CHARACTER: 'Fail creating character',
-  FAIL_SEARCHING_CHARACTERS: 'Fail searching characters',
-  FAIL_SEARCHING_CHARACTER_BY_ID: 'Fail searching character by Id',
-  FAIL_SEARCHING_CHARACTER_BY_NAME: 'Fail searching character by Name',
-  FAIL_DELETING_CHARACTER: 'Fail deleting characer',
-};
-
-const CharacterSuccess = {
-  SUCCESS_UPDATING_CHARACTER: 'Success updating character',
-};
-
 module.exports.UserSuccess = UserSuccess;
 module.exports.UserErrors = UserErrors;
-module.exports.MovieErrors = MovieErrors;
-module.exports.MovieSuccess = MovieSuccess;
 module.exports.MobileDevErrors = MobileDevErrors;
 module.exports.MobileDevSuccess = MobileDevSuccess;
-module.exports.CharacterErrors = CharacterErrors;
-module.exports.CharacterSuccess = CharacterSuccess;
 module.exports.AppErrors = AppErrors;
 module.exports.AppSuccess = AppSuccess;
