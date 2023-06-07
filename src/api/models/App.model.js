@@ -29,10 +29,17 @@ const AppSchema = new Schema(
     }, // lenguaje de la aplicación
     appSize: { type: Number, required: true }, // tamaño en MBs de la app
     mobileDevs: {
-      //  Referencia al modelo de dato de los MobilesDev
+      //  Referencia al modelo de dato de los MobilesDev-
       type: [mongoose.Schema.Types.ObjectId],
       ref: 'MobileDev',
       required: true,
+    },
+    //
+    image: {
+      type: String,
+    }, // AQUÍ
+    description: {
+      type: String,
     },
     users: {
       type: [mongoose.Schema.Types.ObjectId],

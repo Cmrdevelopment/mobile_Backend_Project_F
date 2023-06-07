@@ -1,4 +1,5 @@
 const { isAuth } = require('../../middleware/auth.middleware');
+const { upload } = require('../../middleware/files.middleware');
 
 const {
   create,
@@ -13,7 +14,7 @@ const {
 
 const AppRoutes = require('express').Router();
 
-AppRoutes.post('/', create);
+AppRoutes.post('/', upload.single('image'), create);
 AppRoutes.delete('/:id', deleteApp);
 AppRoutes.get('/', getAll);
 AppRoutes.get('/:id', getById);
