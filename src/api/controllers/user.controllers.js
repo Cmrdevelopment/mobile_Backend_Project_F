@@ -242,10 +242,7 @@ const login = async (req, res, next) => {
       if (bcrypt.compareSync(userPassword, userDB.password)) {
         const token = generateToken(userDB._id, userEmail);
         return res.status(200).json({
-          user: {
-            email: userEmail,
-            _id: userDB._id,
-          },
+          user: userDB,
           token,
         });
       } else {
@@ -689,8 +686,8 @@ const autoLogin = async (req, res, next) => {
 const resendCode = async (req, res, next) => {
   try {
     //! vamos a configurar nodemailer porque tenemos que enviar un codigo
-    const email = process.env.EMAIL;
-    const password = process.env.PASSWORD;
+    const email = process.env.NODEMAILER_EMAIL;
+    const password = process.env.NODEMAILER_PASSWORD;
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
