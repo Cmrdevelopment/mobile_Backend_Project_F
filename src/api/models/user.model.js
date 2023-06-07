@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema(
     rol: {
       type: String,
       enum: ['admin', 'user'],
-      required: true,
+      required: false,
     },
     confirmationCode: {
       type: Number,
