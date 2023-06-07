@@ -16,6 +16,7 @@ const {
   changeEmail,
   sendNewCode,
   verifyNewEmail,
+  autoLogin,
 } = require('../controllers/user.controllers');
 
 const express = require('express');
@@ -33,6 +34,7 @@ UserRoutes.delete('/', [isAuth], deleteUser);
 UserRoutes.post('/check', checkNewUser);
 UserRoutes.post('/changeEmail/', [isAuth], changeEmail);
 UserRoutes.post('/verifyNewEmail', [isAuth], verifyNewEmail);
+UserRoutes.post('/login/autologin', autoLogin);
 
 //!---------------- REDIRECT-------------------------------
 UserRoutes.get('/register/sendMail/:id', sendCode);

@@ -13,6 +13,8 @@ const create = async (req, res, next) => {
       category: req.body.category,
       codeLanguages: req.body.codeLanguages,
       appSize: req.body.appSize,
+      image: req.file.path,
+      description: req.body.description, // AQUI
     };
     const newApp = new App(filterBody);
     const saveApp = await newApp.save();
