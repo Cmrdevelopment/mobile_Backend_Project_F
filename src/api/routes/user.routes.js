@@ -6,7 +6,7 @@ const {
   registerWithRedirect,
   login,
   changeForgottenPassword,
-  sendPasswordByEmail,
+  sendPassword,
   changePassword,
   update,
   deleteUser,
@@ -27,7 +27,7 @@ UserRoutes.get('/', getAll);
 UserRoutes.get('/:id', getById);
 UserRoutes.get('/register', upload.single('image'), registerWithRedirect);
 UserRoutes.post('/register', upload.single('image'), registerSlow);
-UserRoutes.get('/forgotpassword/forgotpassword/', changeForgottenPassword);
+UserRoutes.patch('/forgotpassword/forgotpassword/', changeForgottenPassword);
 UserRoutes.post('/login', login);
 UserRoutes.patch('/changepassword', [isAuth], changePassword);
 UserRoutes.patch('/update/update', [isAuth], upload.single('image'), update);
@@ -36,11 +36,11 @@ UserRoutes.post('/check', checkNewUser);
 UserRoutes.post('/changeEmail/', [isAuth], changeEmail);
 UserRoutes.post('/verifyNewEmail', [isAuth], verifyNewEmail);
 UserRoutes.post('/login/autologin', autoLogin);
-UserRoutes.post('/resend', resendCode);
+UserRoutes.post('/users/resend', resendCode);
 
 //!---------------- REDIRECT-------------------------------
 UserRoutes.get('/register/sendMail/:id', sendCode);
-UserRoutes.get('/sendPasswordByEmail/:id', sendPasswordByEmail);
+UserRoutes.patch('/sendPassword/:id', sendPassword);
 UserRoutes.get('/sendNewCode/:id', [isAuth], sendNewCode);
 
 module.exports = UserRoutes;

@@ -264,68 +264,77 @@ const login = async (req, res, next) => {
 //! ------------------CAMBIO DE CONTRASEÑA CUANDO NO ESTAS LOGADO---------------
 //? -----------------------------------------------------------------------------
 
-const changeForgottenPassword = async (req, res) => {
+const changeForgottenPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
+    // si el usuario existe entonces hacemos el redirect para
     const userDb = await User.findOne({ email });
     if (userDb) {
       return res.redirect(
-        `${BASE_URL_COMPLETE}/api/v1/users/sendPasswordByEmail/${userDb._id}`
+        307,
+        `${BASE_URL_COMPLETE}/api/v1/users/sendPassword/${userDb._id}`
       );
     } else {
-      return res.status(404).json(UserErrors.FAIL_REGISTRERING_USER);
+      return res.status(404).json('User no register');
     }
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
-const sendPasswordByEmail = async (req, res, next) => {
+const sendPassword = async (req, res, next) => {
   try {
     const { id } = req.params;
-
     const userDb = await User.findById(id);
-
-    const nodemailer_email = process.env.NODEMAILER_EMAIL;
-    const nodemailer_password = process.env.NODEMAILER_PASSWORD;
-
+    // configuramos el transporte de nodemailer
+    const email = process.env.NODEMAILER_EMAIL;
+    const password = process.env.NODEMAILER_PASSWORD;
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: nodemailer_email,
-        pass: nodemailer_password,
+        user: email,
+        pass: password,
       },
     });
 
-    let randomPasswordSecure = randomPassword();
-
+    // Generamos la password secura con la funcion randomPassword
+    let passwordSecure = randomPassword();
+    console.log(passwordSecure);
     const mailOptions = {
-      from: nodemailer_email,
+      from: email,
       to: userDb.email,
       subject: '-----',
-      text: `User: ${userDb.name}. Your new code login is ${randomPasswordSecure} 
-      We sent you this msg because we recived a password change request,
-      if you didn't made it, please contact us!`,
+      text: `User: ${userDb.name}. Your new code login is ${passwordSecure} Hemos enviado esto porque tenemos una solicitud de cambio de contraseña, si no has sido ponte en contacto con nosotros, gracias.`,
     };
 
-    transporter.sendMail(mailOptions, async function (error) {
+    // enviamos el email
+    transporter.sendMail(mailOptions, async function (error, info) {
       if (error) {
+        // si hay error quiere decir que ni hemos actualizado el user, ni enviamos email
+        console.log(error);
         return res.status(404).json('dont send email and dont update user');
       } else {
-        const newPasswordBcrypt = bcrypt.hashSync(randomPasswordSecure, 10);
-        await User.findByIdAndUpdate(id, { password: newPasswordBcrypt });
-        const updatedUser = await User.findById(id);
-
-        if (bcrypt.compareSync(randomPasswordSecure, updatedUser.password)) {
-          return res.status(200).json({
-            updateUser: true,
-            sendPassword: true,
-          });
-        } else {
-          return res.status(404).json({
-            updateUser: false,
-            sendPassword: true,
-          });
+        console.log('Email sent: ' + info.response);
+        // ----> si hemos enviado el correo, hasheamos la contraseña y actualizamos el user
+        const newPasswordBcrypt = bcrypt.hashSync(passwordSecure, 10);
+        try {
+          // actualizamos la contraseña en el back
+          await User.findByIdAndUpdate(id, { password: newPasswordBcrypt });
+          const userUpdatePassword = await User.findById(id);
+          /// comprobamos que se haya actualizado correctamente
+          if (bcrypt.compareSync(passwordSecure, userUpdatePassword.password)) {
+            return res.status(200).json({
+              updateUser: true,
+              sendPassword: true,
+            });
+          } else {
+            // si no se ha actualizado damos feedback de que se envio la contraseña pero
+            // ... no se actualizo
+            return res.status(404).json({
+              updateUser: false,
+              sendPassword: true,
+            });
+          }
+        } catch (error) {
+          return res.status(404).json(error.message);
         }
       }
     });
@@ -731,7 +740,7 @@ module.exports = {
   registerWithRedirect,
   login,
   changeForgottenPassword,
-  sendPasswordByEmail,
+  sendPassword,
   changePassword,
   update,
   deleteUser,

@@ -14,7 +14,7 @@ const create = async (req, res, next) => {
       codeLanguages: req.body.codeLanguages,
       appSize: req.body.appSize,
       image: req.file.path,
-      description: req.body.description, // AQUI
+      description: req.body.description,
     };
     const newApp = new App(filterBody);
     const saveApp = await newApp.save();
