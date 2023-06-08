@@ -36,7 +36,7 @@ UserRoutes.post('/check', checkNewUser);
 UserRoutes.post('/changeEmail/', [isAuth], changeEmail);
 UserRoutes.post('/verifyNewEmail', [isAuth], verifyNewEmail);
 UserRoutes.post('/login/autologin', autoLogin);
-UserRoutes.post('/users/resend', resendCode);
+UserRoutes.post('/resend', resendCode);
 
 //!---------------- REDIRECT-------------------------------
 UserRoutes.get('/register/sendMail/:id', sendCode);

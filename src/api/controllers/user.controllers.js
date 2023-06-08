@@ -381,8 +381,7 @@ const changePassword = async (req, res, next) => {
 //? ---------------------------------UPDATE-------------------------------------- // AQUÍ
 //! -----------------------------------------------------------------------------
 const update = async (req, res, next) => {
-  //let catchImg = req.file?.path;
-  let catchImg = req.body.image;
+  let catchImg = req.file?.path;
 
   try {
     const filterBody = {
@@ -398,10 +397,12 @@ const update = async (req, res, next) => {
     patchUser._id = req.user._id;
     patchUser.password = req.user.password;
     patchUser.rol = req.user.rol;
+    patchUser.check = req.user.check;
 
     await User.findByIdAndUpdate(req.user._id, patchUser);
 
     if (req.file) {
+      console.log('entro');
       deleteImgCloudinary(req.user.image);
     }
 
@@ -432,7 +433,7 @@ const update = async (req, res, next) => {
       testUpdate,
     });
   } catch (error) {
-    deleteImgCloudinary(catchImg);
+    if (catchImg) deleteImgCloudinary(catchImg);
     return next(error);
   }
 };
