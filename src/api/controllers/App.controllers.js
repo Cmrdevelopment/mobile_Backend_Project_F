@@ -193,6 +193,24 @@ const toggleFavorite = async (req, res, next) => {
   }
 };
 
+//! ---------------------------------------------------------------------
+//? ------------------------------GET-STATUS-FAV --------------------------------
+//! ---------------------------------------------------------------------
+const getFavoriteStatus = async (req, res, next) => {
+  try {
+    const app = await App.findById(req.params.id);
+    const user = await User.findById(req.user._id);
+
+    if (app.users.includes(user._id)) {
+      res.status(200).json({ isFavorite: true });
+    } else {
+      res.status(200).json({ isFavorite: false });
+    }
+  } catch (error) {
+    return next('Error while getting favorite status', error);
+  }
+};
+
 module.exports = {
   create,
   getAll,
@@ -202,4 +220,5 @@ module.exports = {
   deleteApp,
   toggleFavorite,
   updateMobileDev,
+  getFavoriteStatus,
 };

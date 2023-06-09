@@ -444,7 +444,6 @@ const update = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
   try {
     const { _id, image } = req.user;
-
     await User.findByIdAndDelete(_id);
     if (await User.findById(_id)) {
       return res.status(404).json(UserErrors.FAIL_DELETING_USER);

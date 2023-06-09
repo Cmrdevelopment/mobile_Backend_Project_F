@@ -10,6 +10,7 @@ const {
   deleteApp,
   toggleFavorite,
   updateMobileDev,
+  getFavoriteStatus,
 } = require('../controllers/App.controllers');
 
 const AppRoutes = require('express').Router();
@@ -22,5 +23,6 @@ AppRoutes.get('/appName/:appName', getByAppName);
 AppRoutes.patch('/:id', updateApp);
 AppRoutes.patch('/updateMobileDev/:id', updateMobileDev);
 AppRoutes.put('/favorite/:id', [isAuth], toggleFavorite); //----id del usuario
+AppRoutes.get('/favoriteStatus/:id', [isAuth], getFavoriteStatus);
 
 module.exports = AppRoutes;

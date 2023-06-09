@@ -200,6 +200,23 @@ const addFavorite = async (req, res, next) => {
     return next('Error while adding to favourites', error);
   }
 };
+//! ---------------------------------------------------------------------
+//? ------------------------------GET-STATUS-FAV --------------------------------
+//! ---------------------------------------------------------------------
+const getFavoriteStatus = async (req, res, next) => {
+  try {
+    const mobileFav = await MobileDev.findById(req.params.id);
+    const user = await User.findById(req.user._id);
+
+    if (mobileFav.users.includes(user._id)) {
+      res.status(200).json({ isFavorite: true });
+    } else {
+      res.status(200).json({ isFavorite: false });
+    }
+  } catch (error) {
+    return next('Error while getting favorite status', error);
+  }
+};
 
 module.exports = {
   create,
@@ -210,4 +227,5 @@ module.exports = {
   deleteMobileDev,
   addFavorite,
   updateApp,
+  getFavoriteStatus,
 };
