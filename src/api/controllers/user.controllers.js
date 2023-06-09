@@ -515,7 +515,7 @@ const getByToken = async (req, res, next) => {
     console.log('getByToken -> req.user: ', req.user)
 
     //const userById = await User.findById(id).populate('mobileDevs');
-    const userByToken = await User.findById(req.user._id);
+    const userByToken = await User.findById(req.user._id).populate('mobileDevs');
     if (userByToken) {
       return res.status(200).json(userByToken);
     } else {
