@@ -12,6 +12,7 @@ const {
   deleteUser,
   getAll,
   getById,
+  getByToken,
   checkNewUser,
   changeEmail,
   sendNewCode,
@@ -25,6 +26,7 @@ const UserRoutes = express.Router();
 
 UserRoutes.get('/', getAll);
 UserRoutes.get('/:id', getById);
+UserRoutes.get('/getUserByToken/getUserByToken', [isAuth], getByToken);
 UserRoutes.get('/register', upload.single('image'), registerWithRedirect);
 UserRoutes.post('/register', upload.single('image'), registerSlow);
 UserRoutes.patch('/forgotpassword/forgotpassword/', changeForgottenPassword);

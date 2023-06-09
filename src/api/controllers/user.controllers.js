@@ -277,7 +277,7 @@ const changeForgottenPassword = async (req, res, next) => {
     } else {
       return res.status(404).json('User no register');
     }
-  } catch (error) {}
+  } catch (error) { }
 };
 
 const sendPassword = async (req, res, next) => {
@@ -422,11 +422,11 @@ const update = async (req, res, next) => {
     if (req.file) {
       updateUser.image == req.file.path
         ? testUpdate.push({
-            file: true,
-          })
+          file: true,
+        })
         : testUpdate.push({
-            file: false,
-          });
+          file: false,
+        });
     }
 
     return res.status(200).json({
@@ -491,6 +491,8 @@ const getAll = async (req, res, next) => {
 const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
+    console.log('getById -> id: ', req.params)
+
     const userById = await User.findById(id).populate('mobileDevs');
     if (userById) {
       return res.status(200).json(userById);
@@ -501,6 +503,43 @@ const getById = async (req, res, next) => {
     return next(error);
   }
 };
+
+
+//! ---------------------------------------------------------------------
+//? ------------------------------GET BY TOKEN -------------------------------
+//! ---------------------------------------------------------------------
+const getByToken = async (req, res, next) => {
+  try {
+    //const { id } = req.params;
+
+    console.log('getByToken -> req.user: ', req.user)
+
+    //const userById = await User.findById(id).populate('mobileDevs');
+    const userByToken = await User.findById(req.user._id);
+    if (userByToken) {
+      return res.status(200).json(userByToken);
+    } else {
+      return res.status(404).json('No user found');
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+
+// const getFavoriteStatus = async (req, res, next) => {
+//   try {
+//     const mobileFav = await MobileDev.findById(req.params.id);
+//     const user = await User.findById(req.user._id);
+
+//     if (mobileFav.users.includes(user._id)) {
+//       res.status(200).json({ isFavorite: true });
+//     } else {
+//       res.status(200).json({ isFavorite: false });
+//     }
+//   } catch (error) {
+//     return next('Error while getting favorite status', error);
+//   }
+// };
 
 //! ------------------------------------------------------------------------
 //? -------------------------- CHECK NEW USER------------------------------
@@ -746,6 +785,7 @@ module.exports = {
   deleteUser,
   getAll,
   getById,
+  getByToken,
   checkNewUser,
   changeEmail,
   sendNewCode,
