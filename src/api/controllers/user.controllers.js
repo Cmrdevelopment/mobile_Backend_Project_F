@@ -277,7 +277,7 @@ const changeForgottenPassword = async (req, res, next) => {
     } else {
       return res.status(404).json('User no register');
     }
-  } catch (error) { }
+  } catch (error) {}
 };
 
 const sendPassword = async (req, res, next) => {
@@ -422,11 +422,11 @@ const update = async (req, res, next) => {
     if (req.file) {
       updateUser.image == req.file.path
         ? testUpdate.push({
-          file: true,
-        })
+            file: true,
+          })
         : testUpdate.push({
-          file: false,
-        });
+            file: false,
+          });
     }
 
     return res.status(200).json({
@@ -491,7 +491,7 @@ const getAll = async (req, res, next) => {
 const getById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    console.log('getById -> id: ', req.params)
+    console.log('getById -> id: ', req.params);
 
     const userById = await User.findById(id).populate('mobileDevs');
     if (userById) {
@@ -504,7 +504,6 @@ const getById = async (req, res, next) => {
   }
 };
 
-
 //! ---------------------------------------------------------------------
 //? ------------------------------GET BY TOKEN -------------------------------
 //! ---------------------------------------------------------------------
@@ -512,10 +511,12 @@ const getByToken = async (req, res, next) => {
   try {
     //const { id } = req.params;
 
-    console.log('getByToken -> req.user: ', req.user)
+    console.log('getByToken -> req.user: ', req.user);
 
     //const userById = await User.findById(id).populate('mobileDevs');
-    const userByToken = await User.findById(req.user._id).populate('mobileDevs');
+    const userByToken = await User.findById(req.user._id)
+      .populate('mobileDevs')
+      .populate(`apps`);
     if (userByToken) {
       return res.status(200).json(userByToken);
     } else {
