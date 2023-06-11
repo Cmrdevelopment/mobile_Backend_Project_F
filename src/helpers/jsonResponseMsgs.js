@@ -13,6 +13,8 @@ const UserErrors = {
   FAIL_MATCHING_PASSWORDS: `Fail matching passwords`,
   FAIL_REGISTRERING_USER: `Fail registering user`,
   FAIL_CHANGING_USER_EMAIL: 'Fail changing user email',
+  FAIL_LOGIN_PASSWORD: 'Wrong password, please try again',
+  FAIL_LOGIN_EMAIL: 'Wrong email address, please try again', 
 };
 
 const MobileDevErrors = {

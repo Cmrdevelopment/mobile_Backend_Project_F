@@ -96,6 +96,7 @@ const updateApp = async (req, res, next) => {
       codeLanguages: req.body.codeLanguages,
       appSize: req.body.appSize,
       description: req.body.description,
+      
     };
     const { id } = req.params;
     const appById = await App.findById(id);

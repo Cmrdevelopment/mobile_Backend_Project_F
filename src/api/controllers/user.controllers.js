@@ -246,10 +246,10 @@ const login = async (req, res, next) => {
           token,
         });
       } else {
-        return res.status(404).json('Passwords dont match');
+        return res.status(404).json(UserErrors.FAIL_LOGIN_PASSWORD); //Contraseña equivocada
       }
     } else {
-      return res.status(404).json('User not registered');
+      return res.status(404).json(UserErrors.FAIL_LOGIN_EMAIL); //User not found/mail not found
     }
   } catch (error) {
     return next(error);
